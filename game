@@ -1,0 +1,122 @@
+/*
+vRandom = 1 ~ 30 사이의 임의의 수 반환 (Ex.23)
+x 번째 : 15(사용자가 입력한 값)보다 큰 숫자를 입력하세요. [남은 횟수 >> x] : 17
+x 번째 : 17(사용자가 입력한 값)보다 큰 숫자를 입력하세요. [남은 횟수 >> x] : 21
+...
+1 ~ 3 번째 : 
+	x 번째 정답 23입니다. 천재 이십니다
+4 ~ 5 번째 : 
+	x 번째 정답 23입니다. 양호 하십니다.
+6 ~ 10 번째 : 
+	x 번째 정답 23입니다. 분발 하세요.
+10 이상 : 
+	탈락!!!!(하고 빠져나가기)
+
+
+01. vRandom에 1~30사이의 임의의 수 반환
+		int vRandom = (int)Math.random() * 30 + 1); //1 ~ 30 사이의 임의의 값 
+
+02. while 밖에10번의 기회를 cnt하는 변수 생성 / 시도한 횟수를 카운트하는 변수 생성
+		chanceCnt = 0;
+		tryCnt = 1;
+		
+		**만약 에러메세지가 뜬다면 cnt되지 않음!
+		오류에 걸리지 않을 경우 cnt 증감!
+
+03. 사용자가 입력한 값과 vRandom값을 비교
+	만약 cnt가 10 이상이라면 >> 	탈락!!!! >> 빠져나가기
+	만약 사용자가 입력한 값이 더 크다면 >> (시도횟수) 번째 : (사용자가 입력한 값)보다 작은 숫자를 입력하세요. [남은 횟수 >> x] : 
+	만약 사용자가 입력한 값이 더 작다면 >> x 번째 : (사용자가 입력한 값)보다 큰 숫자를 입력하세요. [남은 횟수 >> x] : 
+	만약 사용자가 입력한 값과 같다면 >>	
+		시도cnt -- 한 후에
+		시도cnt 1 ~ 3 라면 >> 	x 번째 정답 (임의의 값)입니다. 천재 이십니다
+		시도cnt 4 ~ 5 라면 >> 	x 번째 정답 23입니다. 양호 하십니다.
+		시도cnt 6 ~ 10 라면 >> 	x 번째 정답 23입니다. 분발 하세요.
+	
+*/
+
+package classes;
+import java.io.IOException; 
+class  JavaHW16_05_GuessGameV01_한다영 { 
+	public static void main(String[] args) throws IOException {
+
+		int vRandom = (int)(Math.random() * 30 + 1); //1 ~ 30 사이의 임의의 값 
+		int tryCnt = 1; //시도 횟수
+		int chanceCnt = 10; //기회 횟수
+
+		while(true){ //==============================================================================
+			
+			if(tryCnt == 1){ //처음에만 출력되도록..
+				System.out.print("\n1 ~ 30 사이의 숫자를 입력하세요 [종료 : 0] >> \n"+ tryCnt +" 번째 : "); 
+			}
+ 			
+			int vRead01 = System.in.read();
+			int vRead02 = System.in.read();
+
+			int cntGarvage = System.in.available(); //cntGarvage값에 남은 byte수의 값 
+			System.in.skip(cntGarvage); //남은 byte수를 삭제 
+
+			if(cntGarvage > 2){ 
+				System.out.println("^	두자리 이하의 숫자를 입력하시오. "); 
+				continue;
+			}
+	
+			if(vRead01 == 13) { //숫자를 입력하지 않고 Enter 입력 했을 경우
+				System.out.println("^	Error Chk : Enter 입력됨 확인 ");
+				continue;
+			} else if (vRead01 == 48) {// 0을 입력했을 경우
+				System.out.println("^	시스템 종료 합니다. "); 
+				System.exit(0);
+			} else if (vRead01 < 48 || vRead01 > 57 || vRead02 < 48 || vRead02 > 57 ) {// 숫자가 아닐경우
+				if(vRead02 != 13){ //만약 vRead02가 13이라면 한자리 수에 해당하는 경우일 수 있기 때문에 
+					System.out.println("^	숫자가 아닙니다. "); 
+					continue;
+				}	
+			} 
+
+			int result = 0;
+			//한자리 숫자를 입력했을 경우
+			if(vRead02 == 13) { //두번째에서 Enter입력
+				result = vRead01 - 48;
+			}else { // 두자리 숫자를 입력했을 경우 - 두번째에서 Enter 입력 안함
+				result = (vRead01 - 48)*10 + (vRead02 - 48);
+			}
+
+
+			if (result > 30 || result <= 0) { 
+				System.out.println("^		1 ~ 30 사이의 숫자가 아닙니다."); 
+				continue;
+			} else { //에러가 나지 않을 경우 
+				chanceCnt --; //기회 횟수 -1
+				tryCnt ++; //시도횟수 +1
+			}
+
+
+			if(tryCnt > 10) {	 //시도 횟수가 10번을 초과할 경우에는			
+				System.out.println("탈락!!!!!!!!!!!!!"); 
+				System.exit(0); //종료
+			} else if	(result < vRandom) { //입력한 값이 랜덤값보다 클 경우
+				System.out.print(tryCnt + " 번째 : " + result + " 보다 큰 숫자를 입력하세요. [남은 횟수 >> " + chanceCnt + "] : ");
+			} else if(result > vRandom){ //입력한 값이 랜덤값보다 작을 경우
+				System.out.print(tryCnt + " 번째 : " + result + " 보다 작은 숫자를 입력하세요. [남은 횟수 >> " + chanceCnt + "] : ");
+			} else if (result == vRandom) { //정답이라면
+				tryCnt --; //정답일 경우에도 시도 횟수를 늘리기 때문에 
+				if(tryCnt <= 3){ // 1 2 3
+					System.out.println("\t"+tryCnt+" 번째 정답 "+vRandom+"입니다. 천재 이십니다");
+				} else if(tryCnt <= 5){ // 4 5
+					System.out.println("\t"+tryCnt+" 번째 정답 "+vRandom+"입니다. 양호 하십니다.");
+				} else if(tryCnt <= 10){ // 6 7 8 9 10
+					System.out.println("\t"+tryCnt+" 번째 정답 "+vRandom+"입니다. 분발 하세요.");
+				}
+				System.exit(0); 
+			}
+
+		}//outer while End ===============================================================================
+
+	}	//main The End
+	
+} 
+
+
+
+
